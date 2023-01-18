@@ -1,28 +1,50 @@
 import 'package:fhemtni/screens/my_orders/models/my_orders_model.dart';
 import 'package:fhemtni/screens/my_orders/cards/order_card.dart';
+import 'package:fhemtni/services/auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
 class MyOrders extends StatefulWidget {
-  static void create(BuildContext context) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => ChangeNotifierProvider<MyOrdersModel>(
-                  create: (context) => MyOrdersModel(),
-                  child: Consumer<MyOrdersModel>(
-                    builder: (context, model, _) {
-                      return MyOrders._(
-                        model: model,
-                      );
-                    },
-                  ),
-                )));
+  static void create(BuildContext context, {bool returnBack = true}) {
+    if (returnBack) {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ChangeNotifierProvider<MyOrdersModel>(
+                    create: (context) => MyOrdersModel(),
+                    child: Consumer<MyOrdersModel>(
+                      builder: (context, model, _) {
+                        return MyOrders._(
+                          model: model,
+                          canReturnBack: returnBack,
+                        );
+                      },
+                    ),
+                  )));
+    } else {
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) => ChangeNotifierProvider<MyOrdersModel>(
+                    create: (context) => MyOrdersModel(),
+                    child: Consumer<MyOrdersModel>(
+                      builder: (context, model, _) {
+                        return MyOrders._(
+                          model: model,
+                          canReturnBack: returnBack,
+                        );
+                      },
+                    ),
+                  )));
+    }
   }
 
   final MyOrdersModel model;
+  final bool canReturnBack;
 
-  const MyOrders._({Key? key, required this.model}) : super(key: key);
+  const MyOrders._({Key? key, required this.model, required this.canReturnBack})
+      : super(key: key);
 
   @override
   State<MyOrders> createState() => _MyOrdersState();
@@ -43,6 +65,21 @@ class _MyOrdersState extends State<MyOrders> {
       appBar: AppBar(
         title: const Text("My orders"),
         centerTitle: true,
+        actions: !widget.canReturnBack
+            ? [
+                IconButton(
+                  onPressed: () {
+                    final auth=GetIt.I.get<Auth>();
+                    auth.signOut(context);
+                  },
+                  icon: const Icon(
+                    Icons.logout,
+                    color: Colors.red,
+                  ),
+                  tooltip: "Logout",
+                ),
+              ]
+            : [],
       ),
       body: widget.model.isLoading
           ? const Center(

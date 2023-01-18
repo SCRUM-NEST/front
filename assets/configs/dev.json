@@ -1,6 +1,6 @@
 {
     "app_name": "Fhemtni",
     "flavor_name": "development",
-    "api_base_url": "http://fhemtni-env-2.eba-bxp3wjcz.us-west-2.elasticbeanstalk.com/",
+    "api_base_url": "http://fhemtnitest-env.eba-xc6hqhp6.us-west-2.elasticbeanstalk.com/",
     "api_key": ""
 }

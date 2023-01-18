@@ -49,13 +49,18 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   final TextEditingController roleController = TextEditingController();
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
 
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController = TextEditingController();
+  final TextEditingController confirmPasswordController =
+      TextEditingController();
 
   final FocusNode roleFocus = FocusNode();
+  final FocusNode firstNameFocus = FocusNode();
+  final FocusNode lastNameFocus = FocusNode();
 
   final FocusNode emailFocus = FocusNode();
   final FocusNode usernameFocus = FocusNode();
@@ -97,7 +102,8 @@ class _SignUpState extends State<SignUp> {
           body: Form(
             key: _formKey,
             child: ListView(
-              padding: MediaQuery.of(context).padding.add(const EdgeInsets.all(20)),
+              padding:
+                  MediaQuery.of(context).padding.add(const EdgeInsets.all(20)),
               children: [
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -130,7 +136,62 @@ class _SignUpState extends State<SignUp> {
                   child: SizedBox(),
                 ),
 
-                ///First name text field
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: DefaultTextField(
+                      onTap: () {
+                        widget.model.requestFocus(context, firstNameFocus);
+                      },
+                      onSubmitted: (value) {
+                        widget.model.requestFocus(context, lastNameFocus);
+                      },
+                      validator: (value) {
+                        if (value != null && Validators.firstName(value)) {
+                          return null;
+                        }
+                        return "Please enter a valid firstname";
+                      },
+                      focusNode: firstNameFocus,
+                      controller: firstNameController,
+                      hintText: "First name",
+                      isLoading: widget.model.isLoading,
+                      textCapitalization: TextCapitalization.none,
+                      textInputAction: TextInputAction.next,
+                      icon: const Icon(
+                        Icons.person_outline,
+                        size: 18,
+                      ),
+                      keyboardType: TextInputType.text),
+                ),
+
+                Padding(
+                  padding: const EdgeInsets.only(top: 10),
+                  child: DefaultTextField(
+                      onTap: () {
+                        widget.model.requestFocus(context, lastNameFocus);
+                      },
+                      onSubmitted: (value) {
+                        widget.model.requestFocus(context, usernameFocus);
+                      },
+                      validator: (value) {
+                        if (value != null && Validators.lastName(value)) {
+                          return null;
+                        }
+                        return "Please enter a valid last name";
+                      },
+                      focusNode: lastNameFocus,
+                      controller: lastNameController,
+                      hintText: "Last name",
+                      isLoading: widget.model.isLoading,
+                      textCapitalization: TextCapitalization.none,
+                      textInputAction: TextInputAction.next,
+                      icon: const Icon(
+                        Icons.person_outline,
+                        size: 18,
+                      ),
+                      keyboardType: TextInputType.text),
+                ),
+
                 Padding(
                   padding: const EdgeInsets.only(top: 10),
                   child: DefaultTextField(
@@ -224,7 +285,8 @@ class _SignUpState extends State<SignUp> {
                         widget.model.requestFocus(context, passwordFocus);
                       },
                       onSubmitted: (value) {
-                        widget.model.requestFocus(context, confirmPasswordFocus);
+                        widget.model
+                            .requestFocus(context, confirmPasswordFocus);
                       },
                       validator: (value) {
                         if (value != null && Validators.password(value)) {
@@ -247,7 +309,9 @@ class _SignUpState extends State<SignUp> {
                         onPressed: () {
                           widget.model.changePasswordVisibility();
                         },
-                        icon: Icon(widget.model.obscurePassword ? Icons.visibility : Icons.visibility_off),
+                        icon: Icon(widget.model.obscurePassword
+                            ? Icons.visibility
+                            : Icons.visibility_off),
                       ),
                       keyboardType: TextInputType.text),
                 ),
@@ -263,9 +327,11 @@ class _SignUpState extends State<SignUp> {
                       validator: (value) {
                         if (value != null &&
                             Validators.password(value) &&
-                            passwordController.text == confirmPasswordController.text) {
+                            passwordController.text ==
+                                confirmPasswordController.text) {
                           return null;
-                        } else if (value == null || !Validators.password(value)) {
+                        } else if (value == null ||
+                            !Validators.password(value)) {
                           return "Please enter a valid password";
                         }
                         return "Passwords didn't match";
@@ -273,20 +339,25 @@ class _SignUpState extends State<SignUp> {
                       textCapitalization: TextCapitalization.none,
                       textInputAction: TextInputAction.done,
                       onTap: () {
-                        widget.model.requestFocus(context, confirmPasswordFocus);
+                        widget.model
+                            .requestFocus(context, confirmPasswordFocus);
                       },
                       onSubmitted: (value) {
                         widget.model.removeFocus(context);
 
-                        if (!widget.model.isLoading && _formKey.currentState!.validate()) {
-                           widget.model.submit(context,
-                                    username: usernameController.text,
-                                    password: passwordController.text,
-                                    email: emailController.text,
-                                    role: roleController.text);
+                        if (!widget.model.isLoading &&
+                            _formKey.currentState!.validate()) {
+                          widget.model.submit(context,
+                              username: usernameController.text,
+                              password: passwordController.text,
+                              email: emailController.text,
+                              role: roleController.text,
+                              firstName: firstNameController.text,
+                              lastName: lastNameController.text);
                         }
                       },
-                      obscureText: widget.model.obscureConfirmPassword ? true : false,
+                      obscureText:
+                          widget.model.obscureConfirmPassword ? true : false,
                       icon: const Icon(
                         Icons.lock_outline,
                         size: 18,
@@ -295,7 +366,9 @@ class _SignUpState extends State<SignUp> {
                         onPressed: () {
                           widget.model.changeConfirmPasswordVisibility();
                         },
-                        icon: Icon(widget.model.obscureConfirmPassword ? Icons.visibility : Icons.visibility_off),
+                        icon: Icon(widget.model.obscureConfirmPassword
+                            ? Icons.visibility
+                            : Icons.visibility_off),
                       ),
                       keyboardType: TextInputType.text),
                 ),
@@ -313,7 +386,9 @@ class _SignUpState extends State<SignUp> {
                                     username: usernameController.text,
                                     password: passwordController.text,
                                     email: emailController.text,
-                                    role: roleController.text);
+                                    role: roleController.text,
+                                    firstName: firstNameController.text,
+                                    lastName: lastNameController.text);
                               }
                             },
                       child: !widget.model.isLoading
@@ -335,10 +410,13 @@ class _SignUpState extends State<SignUp> {
                 Center(
                   child: Text.rich(TextSpan(
                     children: [
-                      TextSpan(text: 'Do you have an account? ', style: themeModel.theme.textTheme.bodyText1),
+                      TextSpan(
+                          text: 'Do you have an account? ',
+                          style: themeModel.theme.textTheme.bodyText1),
                       TextSpan(
                         text: "Sign in",
-                        style: themeModel.theme.textTheme.headline5!.apply(color: themeModel.accentColor),
+                        style: themeModel.theme.textTheme.headline5!
+                            .apply(color: themeModel.accentColor),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
                             if (!widget.model.isLoading) {

@@ -18,9 +18,9 @@ class Order {
     return Order(
         id: data['id'],
         createdAt: DateTime.parse(data['createdAt']),
-        specifications: data['specifications'],
-        meetLink: data['specifications'],
-        meetDate: data['meetDate'] != null ? DateTime.parse(data['meetDate']) : null,
+        specifications: data['description'],
+        meetLink: data['meet_link'],
+        meetDate: data['meet_date'] != null ? DateTime.parse(data['meet_date']) : null,
         status: data['status'] == "delivered"
             ? OrderStatus.delivered
             : data['status'] == "accepted"

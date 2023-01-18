@@ -18,7 +18,7 @@ class SubmitOrder extends StatefulWidget {
   static void create(BuildContext context, {required Retailer retailer}) {
     Navigator.push(context, CupertinoPageRoute(builder: (context) {
       return ChangeNotifierProvider<SubmitOrderModel>(
-        create: (context) => SubmitOrderModel(),
+        create: (context) => SubmitOrderModel(retailer.id),
         child: Consumer<SubmitOrderModel>(
           builder: (context, model, _) {
             return SubmitOrder._(model: model);
@@ -118,7 +118,11 @@ class _SubmitOrderState extends State<SubmitOrder> {
                   onPressed: widget.model.isLoading
                       ? null
                       : () {
-                          _formKey.currentState!.validate();
+                          if (_formKey.currentState!.validate()) {
+                            widget.model.submit(context,
+                                description: specificationController.text,
+                                cost: costController.text);
+                          }
                         },
                   child: !widget.model.isLoading
                       ? const Text(

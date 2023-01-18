@@ -1,6 +1,8 @@
 import 'package:fhemtni/core/retailer.dart';
+import 'package:fhemtni/services/tailors_service.dart';
 
 import 'package:flutter/cupertino.dart';
+import 'package:get_it/get_it.dart';
 
 class HomePageModel extends ChangeNotifier {
   List<Retailer> retailers = [];
@@ -10,8 +12,8 @@ class HomePageModel extends ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    retailers = List.generate(40,
-        (index) => Retailer(id: index, firstName: "Retailer", lastName: index.toString(), email: "retailer@gmail.com"));
+    final tailorsService=GetIt.I.get<TailorsService>();
+    retailers = await tailorsService.getTailors();
 
     isLoading = false;
     notifyListeners();

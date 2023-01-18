@@ -35,14 +35,25 @@ class SignUpModel extends ChangeNotifier {
   }
 
   Future<void> submit(BuildContext context,
-      {required String username, required String password, required String email, required String role}) async {
+      {required String username,
+      required String password,
+      required String email,
+      required String role,
+      required String firstName,
+      required String lastName}) async {
     try {
       isLoading = true;
       notifyListeners();
 
       final auth = GetIt.I.get<Auth>();
 
-      await auth.register(username: username, password: password, email: email, role: role);
+      await auth.register(
+          username: username,
+          password: password,
+          email: email,
+          role: role,
+          firstName: firstName,
+          lastName: lastName);
 
       Navigator.pop(context);
     } on AppException catch (e) {

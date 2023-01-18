@@ -1,5 +1,6 @@
 import 'package:fhemtni/core/app_exception.dart';
 import 'package:fhemtni/screens/home_page/views/home_page.dart';
+import 'package:fhemtni/screens/my_orders/views/my_orders.dart';
 import 'package:fhemtni/services/auth.dart';
 import 'package:fhemtni/utils/toast_utils.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +33,8 @@ class SignInModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> submit(BuildContext context, {required String username, required String password}) async {
+  Future<void> submit(BuildContext context,
+      {required String username, required String password}) async {
     try {
       isLoading = true;
       notifyListeners();
@@ -41,7 +43,11 @@ class SignInModel extends ChangeNotifier {
 
       await auth.login(username: username, password: password);
 
-      HomePage.create(context);
+      if (auth.user!.role == "tailor") {
+        MyOrders.create(context, returnBack: false);
+      } else {
+        HomePage.create(context);
+      }
     } on AppException catch (e) {
       ToastUtils.show(context, e.message);
     } finally {

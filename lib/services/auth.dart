@@ -1,17 +1,20 @@
 import 'dart:convert';
 import 'package:fhemtni/common/app_config.dart';
 import 'package:fhemtni/core/app_exception.dart';
+import 'package:fhemtni/screens/sign_in/views/sign_in.dart';
 import 'package:fhemtni/utils/endpoints.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:logging/logging.dart';
 import 'package:fhemtni/utils/api_base_helper.dart';
+import 'package:fhemtni/core/user.dart';
 
 class Auth {
   String? accessToken;
+  User? user;
 
-  bool get isConnected => accessToken != null;
+  bool get isConnected => accessToken != null && user != null;
 
   final _logger = Logger("Auth");
 
@@ -42,6 +45,7 @@ class Auth {
         final Map<String, dynamic> body = json.decode(response.body);
 
         accessToken = body['access_token'];
+        user = User.fromMap(body['user']);
 
         _logger.info("Login successful");
       } else if (response.statusCode == 4047) {
@@ -55,13 +59,22 @@ class Auth {
   }
 
   Future<void> register({
+    required String firstName,
+    required String lastName,
     required String username,
     required String password,
     required String role,
     required String email,
   }) async {
     try {
-      final body = {"username": username, "password": password, "email": email, "role": role};
+      final body = {
+        "username": username,
+        "password": password,
+        "email": email,
+        "role": role,
+        "firstName": firstName,
+        "lastName": lastName
+      };
 
       final appConfig = GetIt.I.get<AppConfig>();
 
@@ -87,7 +100,9 @@ class Auth {
 
   Future<void> signOut(BuildContext context) async {
     accessToken = null;
+    user = null;
     await _storage.delete(key: "token");
+    SignIn.create(context);
   }
 
   Future<void> init() async {

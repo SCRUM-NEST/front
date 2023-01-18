@@ -1,8 +1,10 @@
 import 'package:fhemtni/screens/home_page/cards/retailer_card.dart';
 import 'package:fhemtni/screens/home_page/models/home_page_model.dart';
 import 'package:fhemtni/screens/my_orders/views/my_orders.dart';
+import 'package:fhemtni/services/auth.dart';
 import 'package:fhemtni/transitions/fade_route.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
@@ -59,7 +61,10 @@ class _HomePageState extends State<HomePage> {
               tooltip: "My orders",
             ),
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                final auth = GetIt.I.get<Auth>();
+                auth.signOut(context);
+              },
               icon: const Icon(
                 Icons.logout,
                 color: Colors.red,
@@ -77,7 +82,8 @@ class _HomePageState extends State<HomePage> {
                   top: 10,
                 ),
                 itemBuilder: (context, position) {
-                  return RetailerCard(retailer: widget.model.retailers[position]);
+                  return RetailerCard(
+                      retailer: widget.model.retailers[position]);
                 },
                 itemCount: widget.model.retailers.length,
               ));
